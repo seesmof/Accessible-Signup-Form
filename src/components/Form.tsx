@@ -10,6 +10,9 @@ const InputContainer = ({ children }: ContainerProps) => {
   return <div className="flex flex-col gap-1">{children}</div>;
 };
 
+const validateEmail = (email: string): boolean => {
+  return /\S+@\S+\.\S+/.test(email);
+};
 export default function Form() {
   const [fullName, setFullName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
@@ -23,6 +26,9 @@ export default function Form() {
       console.error(
         "The confirmation password does not match the entered one.",
       );
+    if (!fullName.includes(" "))
+      console.error("The name does not contain a surname.");
+    if (!validateEmail(email)) console.error("The email entered is not valid.");
   };
 
   return (
