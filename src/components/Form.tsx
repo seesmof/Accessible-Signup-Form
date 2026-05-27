@@ -37,18 +37,15 @@ export default function Form() {
 
     setPassword("");
     setPasswordError(false);
+    setPasswordVisible(false);
 
     setConfirm("");
     setConfirmError(false);
+    setConfirmVisible(false);
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    setNameError(false);
-    setEmailError(false);
-    setPasswordError(false);
-    setConfirmError(false);
 
     if (!fullName.includes(" ")) {
       setNameError(true);
@@ -61,15 +58,6 @@ export default function Form() {
     }
     if (password !== confirm) {
       setConfirmError(true);
-    }
-
-    if (
-      nameError === false &&
-      emailError === false &&
-      passwordError === false &&
-      !confirmError === false
-    ) {
-      handleReset();
     }
   };
 
