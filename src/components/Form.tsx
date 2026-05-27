@@ -22,9 +22,11 @@ export default function Form() {
 
   const [password, setPassword] = useState<string>("");
   const [passwordError, setPasswordError] = useState<boolean>(false);
+  const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
 
   const [confirm, setConfirm] = useState<string>("");
   const [confirmError, setConfirmError] = useState<boolean>(false);
+  const [confirmVisible, setConfirmVisible] = useState<boolean>(false);
 
   const handleReset = () => {
     setFullName("");
@@ -118,15 +120,26 @@ export default function Form() {
         <label htmlFor="passwordInput" className="label">
           Enter Password
         </label>
-        <input
-          type="password"
-          name="password"
-          id="passwordInput"
-          className={`input ${passwordError && "input-error"}`}
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
+        <div className="flex flex-row gap-1">
+          <input
+            type={passwordVisible ? "text" : "password"}
+            name="password"
+            id="passwordInput"
+            className={`input ${passwordError && "input-error"}`}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <button
+            className="btn"
+            type="button"
+            onClick={() =>
+              setPasswordVisible((passwordVisible) => !passwordVisible)
+            }
+          >
+            {passwordVisible ? "❌" : "✅"}
+          </button>
+        </div>
         {passwordError && (
           <p className="text-red-600 text-sm">
             Please enter a password with 8+ characters.
@@ -139,15 +152,26 @@ export default function Form() {
         <label htmlFor="confirmInput" className="label">
           Confirm Password
         </label>
-        <input
-          type="password"
-          name="confirm"
-          id="confirmInput"
-          className={`input ${confirmError && "input-error"}`}
-          value={confirm}
-          onChange={(e) => setConfirm(e.target.value)}
-          required
-        />
+        <div className="flex flex-row gap-1">
+          <input
+            type={confirmVisible ? "text" : "password"}
+            name="confirm"
+            id="confirmInput"
+            className={`input ${confirmError && "input-error"}`}
+            value={confirm}
+            onChange={(e) => setConfirm(e.target.value)}
+            required
+          />
+          <button
+            className="btn"
+            type="button"
+            onClick={() =>
+              setConfirmVisible((confirmVisible) => !confirmVisible)
+            }
+          >
+            {confirmVisible ? "❌" : "✅"}
+          </button>
+        </div>
         {confirmError && (
           <p className="text-red-600 text-sm">
             The confirmation password doesn`t match
