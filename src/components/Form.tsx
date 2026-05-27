@@ -44,7 +44,7 @@ export default function Form() {
     setConfirmVisible(false);
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.SubmitEvent) => {
     e.preventDefault();
 
     if (!fullName.includes(" ")) {
@@ -76,9 +76,10 @@ export default function Form() {
           value={fullName}
           onChange={(e) => setFullName(e.target.value)}
           required
+          aria-required
         />
         {nameError && (
-          <p className="text-red-600 text-sm">
+          <p className="text-red-600 text-sm" aria-invalid>
             Please enter a valid full name.
           </p>
         )}
@@ -97,9 +98,12 @@ export default function Form() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
+          aria-required
         />
         {emailError && (
-          <p className="text-red-600 text-sm">Please enter a valid email.</p>
+          <p className="text-red-600 text-sm" aria-invalid>
+            Please enter a valid email.
+          </p>
         )}
       </InputContainer>
 
@@ -117,6 +121,7 @@ export default function Form() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            aria-required
           />
           <button
             className="btn"
@@ -129,7 +134,7 @@ export default function Form() {
           </button>
         </div>
         {passwordError && (
-          <p className="text-red-600 text-sm">
+          <p className="text-red-600 text-sm" aria-invalid>
             Please enter a password with 8+ characters.
           </p>
         )}
@@ -149,6 +154,7 @@ export default function Form() {
             value={confirm}
             onChange={(e) => setConfirm(e.target.value)}
             required
+            aria-required
           />
           <button
             className="btn"
@@ -161,7 +167,7 @@ export default function Form() {
           </button>
         </div>
         {confirmError && (
-          <p className="text-red-600 text-sm">
+          <p className="text-red-600 text-sm" aria-invalid>
             The confirmation password doesn`t match
           </p>
         )}
