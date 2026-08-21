@@ -50,7 +50,10 @@ export default function Form() {
     setConfirmVisible(false);
   };
 
-  const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
+  const onSubmit: SubmitHandler<Inputs> = (data) => {
+    console.log(data);
+    handleReset();
+  };
 
   /* 
   const handleSubmit = (e: React.SubmitEvent) => {
