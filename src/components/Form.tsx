@@ -1,10 +1,18 @@
 "use client";
 
 import React, { ReactNode, useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
 
-interface ContainerProps {
+export type Inputs = {
+  name: string;
+  email: string;
+  password: string;
+  passwordConfirm: string;
+};
+
+type ContainerProps = {
   children: ReactNode;
-}
+};
 
 const InputContainer = ({ children }: ContainerProps) => {
   return <div className="flex flex-col gap-1">{children}</div>;
@@ -13,74 +21,70 @@ const InputContainer = ({ children }: ContainerProps) => {
 const validateEmail = (email: string): boolean => {
   return /\S+@\S+\.\S+/.test(email);
 };
+
 export default function Form() {
-  const [fullName, setFullName] = useState<string>("");
-  const [nameError, setNameError] = useState<boolean>(false);
+  const {
+    register,
+    setValue,
+    handleSubmit,
+    getValues,
+    formState: { errors },
+  } = useForm<Inputs>({
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+      passwordConfirm: "",
+    },
+  });
 
-  const [email, setEmail] = useState<string>("");
-  const [emailError, setEmailError] = useState<boolean>(false);
-
-  const [password, setPassword] = useState<string>("");
-  const [passwordError, setPasswordError] = useState<boolean>(false);
   const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
-
-  const [confirm, setConfirm] = useState<string>("");
-  const [confirmError, setConfirmError] = useState<boolean>(false);
   const [confirmVisible, setConfirmVisible] = useState<boolean>(false);
 
   const handleReset = () => {
-    setFullName("");
-    setNameError(false);
-
-    setEmail("");
-    setEmailError(false);
-
-    setPassword("");
-    setPasswordError(false);
+    setValue("name", "");
+    setValue("email", "");
+    setValue("password", "");
+    setValue("passwordConfirm", "");
     setPasswordVisible(false);
-
-    setConfirm("");
-    setConfirmError(false);
     setConfirmVisible(false);
   };
 
+  const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
+
+  /* 
   const handleSubmit = (e: React.SubmitEvent) => {
     e.preventDefault();
 
-    if (!fullName.includes(" ")) {
-      setNameError(true);
-    }
-    if (!validateEmail(email)) {
-      setEmailError(true);
-    }
-    if (password.length < 8) {
-      setPasswordError(true);
-    }
     if (password !== confirm) {
       setConfirmError(true);
     }
   };
+   */
 
   return (
-    <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
+    <form className="flex flex-col gap-5" onSubmit={handleSubmit(onSubmit)}>
       {/* Full Name Input */}
       <InputContainer>
         <label className="label" htmlFor="fullNameInput">
           Full Name
         </label>
         <input
-          className={`input ${nameError && "input-error"}`}
+          className={`input w-full ${errors.name && "input-error"}`}
           type="text"
-          name="fullName"
           id="fullNameInput"
-          value={fullName}
-          onChange={(e) => setFullName(e.target.value)}
           required
           aria-required
+          {...register("name", {
+            validate: {
+              hasSpace: (value) =>
+                value.includes(" ") || "The username must be a full name.",
+            },
+          })}
         />
-        {nameError && (
-          <p className="text-red-600 text-sm" aria-invalid>
-            Please enter a valid full name.
+        {errors.name && (
+          <p className="text-error text-sm" aria-invalid>
+            {errors.name?.message}
           </p>
         )}
       </InputContainer>
@@ -92,17 +96,20 @@ export default function Form() {
         </label>
         <input
           type="email"
-          name="email"
           id="emailInput"
-          className={`input ${emailError && "input-error"}`}
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          className={`input w-full ${errors.email && "input-error"}`}
           required
           aria-required
+          {...register("email", {
+            validate: {
+              isValidEmail: (value) =>
+                validateEmail(value) || "An email must be a valid address.",
+            },
+          })}
         />
-        {emailError && (
-          <p className="text-red-600 text-sm" aria-invalid>
-            Please enter a valid email.
+        {errors.email && (
+          <p className="text-error text-sm" aria-invalid>
+            {errors.email?.message}
           </p>
         )}
       </InputContainer>
@@ -115,13 +122,16 @@ export default function Form() {
         <div className="flex flex-row gap-1">
           <input
             type={passwordVisible ? "text" : "password"}
-            name="password"
             id="passwordInput"
-            className={`input ${passwordError && "input-error"}`}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            className={`input w-full ${errors.password && "input-error"}`}
             required
             aria-required
+            {...register("password", {
+              minLength: {
+                value: 8,
+                message: "The password must be at least 8 characters long.",
+              },
+            })}
           />
           <button
             className="btn"
@@ -133,9 +143,9 @@ export default function Form() {
             {passwordVisible ? "❌" : "✅"}
           </button>
         </div>
-        {passwordError && (
-          <p className="text-red-600 text-sm" aria-invalid>
-            Please enter a password with 8+ characters.
+        {errors.password && (
+          <p className="text-error text-sm" aria-invalid>
+            {errors.password?.message}
           </p>
         )}
       </InputContainer>
@@ -148,13 +158,17 @@ export default function Form() {
         <div className="flex flex-row gap-1">
           <input
             type={confirmVisible ? "text" : "password"}
-            name="confirm"
             id="confirmInput"
-            className={`input ${confirmError && "input-error"}`}
-            value={confirm}
-            onChange={(e) => setConfirm(e.target.value)}
+            className={`input w-full ${errors.passwordConfirm && "input-error"}`}
             required
             aria-required
+            {...register("passwordConfirm", {
+              validate: {
+                doesEqualToPassword: (value) =>
+                  getValues("password") === getValues("passwordConfirm") ||
+                  "The password must be the same.",
+              },
+            })}
           />
           <button
             className="btn"
@@ -166,9 +180,9 @@ export default function Form() {
             {confirmVisible ? "❌" : "✅"}
           </button>
         </div>
-        {confirmError && (
-          <p className="text-red-600 text-sm" aria-invalid>
-            The confirmation password doesn`t match
+        {errors.passwordConfirm && (
+          <p className="text-sm text-error" aria-invalid>
+            {errors.passwordConfirm?.message}
           </p>
         )}
       </InputContainer>
