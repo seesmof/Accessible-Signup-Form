@@ -55,16 +55,6 @@ export default function Form() {
     handleReset();
   };
 
-  /* 
-  const handleSubmit = (e: React.SubmitEvent) => {
-    e.preventDefault();
-
-    if (password !== confirm) {
-      setConfirmError(true);
-    }
-  };
-   */
-
   return (
     <form className="flex flex-col gap-5" onSubmit={handleSubmit(onSubmit)}>
       {/* Full Name Input */}
@@ -130,18 +120,24 @@ export default function Form() {
             required
             aria-required
             {...register("password", {
-              minLength: {
-                value: 8,
-                message: "The password must be at least 8 characters long.",
+              validate: {
+                isNotShort: (value) =>
+                  value.length >= 8 ||
+                  "The password must be at least 8 characters long.",
+                containsLetters: (value) =>
+                  /[A-Za-z]/.test(value) ||
+                  "The password must contain at least one letter.",
+                containsNumber: (value) =>
+                  /[\d]+/.test(value) ||
+                  "The password must contain at least one number.",
               },
             })}
           />
           <button
             className="btn"
             type="button"
-            onClick={() =>
-              setPasswordVisible((passwordVisible) => !passwordVisible)
-            }
+            onClick={() => setPasswordVisible((visible) => !visible)}
+            title={passwordVisible ? "Hide" : "Show"}
           >
             {passwordVisible ? "❌" : "✅"}
           </button>
@@ -176,9 +172,8 @@ export default function Form() {
           <button
             className="btn"
             type="button"
-            onClick={() =>
-              setConfirmVisible((confirmVisible) => !confirmVisible)
-            }
+            onClick={() => setConfirmVisible((visible) => !visible)}
+            title={passwordVisible ? "Hide" : "Show"}
           >
             {confirmVisible ? "❌" : "✅"}
           </button>
